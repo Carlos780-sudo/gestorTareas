@@ -1,4 +1,4 @@
-package test.java.cesur.dam1.practica;
+package cesur.dam1.practica;
 
 import java.util.ArrayList;
 
