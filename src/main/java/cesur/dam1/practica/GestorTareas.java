@@ -1,4 +1,4 @@
-package gestor;
+package cesur.dam1.practica;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -22,6 +22,12 @@ vacío");
  tareas.add(nombre);
  completadas.add(false);
  }
+// Valida que el índice esté dentro del rango de la lista
+ private void validarIndice(int indice) {
+        if (indice < 0 || indice >= tareas.size()) {
+            throw new IndexOutOfBoundsException("Índice fuera de rango");
+        }
+    }
  // ¿Qué pasa si índice no existe?
  public void completarTarea(int indice) {
  completadas.set(indice, true); // ← sin validación de rango
@@ -42,9 +48,11 @@ vacío");
  return tareas.size();
  }
  public String getTarea(int indice) {
+ validarIndice(indice);
  return tareas.get(indice); // ← sin validación de rango
 }
  public boolean estaCompletada(int indice) {
+    validarIndice(indice);
  return completadas.get(indice); // ← sin validación de rango
  }
 }
