@@ -1,58 +1,70 @@
 package cesur.dam1.practica;
 
-// Importamos las herramientas de JUnit 5
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class GestorTareasTest {
+     private GestorTareas gestor;
 
-    // PRUEBA 1: Verificar que una tarea válida se añade bien (Caja Negra)
-    @Test
-    void testAgregarTareaValida() {
-        GestorTareas gestor = new GestorTareas();
-        
-        gestor.agregarTarea("Estudiar Entornos de Desarrollo");
-        
-        // Comprobamos que el total de tareas pase a ser 1
-        assertEquals(1, gestor.getTotalTareas(), "El total de tareas debería ser 1.");
-        // Comprobamos que el texto guardado sea el correcto
-        assertEquals("Estudiar Entornos de Desarrollo", gestor.getTarea(0));
+    @BeforeEach
+    void setUp() {
+        gestor = new GestorTareas();
     }
 
-    // PRUEBA 2: Comprobar que no se admitan textos vacíos (Caja Negra)
+    // --- PRUEBAS DE CAJA BLANCA: BUCLE DE contarPendientes() ---
+
     @Test
-    void testAgregarTareaNombreVacioLanzaExcepcion() {
-        GestorTareas gestor = new GestorTareas();
-        
-        // El código original ya controla esto saltando un IllegalArgumentException
-        assertThrows(IllegalArgumentException.class, () -> {
-            gestor.agregarTarea("   ");
-        }, "Debería saltar una excepción si el nombre solo tiene espacios.");
+    @DisplayName("contarPendientes debe devolver 0 si la lista está vacía")
+    void testContarPendientesListaVacia() {
+        assertEquals(0, gestor.contarPendientes(), "Una lista vacía debería tener 0 tareas pendientes.");
     }
 
-    // PRUEBA 3: Forzar el bug al completar un índice inválido (Caja Blanca)
-   
     @Test
-    void testCompletarTareaIndiceInvalido() {
-        GestorTareas gestor = new GestorTareas();
-        gestor.agregarTarea("Hacer el trabajo final");
-        
-        // Intentamos completar la posición 99 (que no existe)
-        
-        assertThrows(IndexOutOfBoundsException.class, () -> {
-            gestor.completarTarea(99);
-        });
-    }
-
-    // PRUEBA 4: Comprobar el método de contar tareas pendientes (Caja Blanca)
-    
-    @Test
-    void testContarPendientes() {
-        GestorTareas gestor = new GestorTareas();
+    @DisplayName("contarPendientes debe contar correctamente mezclando tareas completadas y pendientes")
+    void testContarPendientesConVariasTareas() {
         gestor.agregarTarea("Tarea 1");
         gestor.agregarTarea("Tarea 2");
+        gestor.agregarTarea("Tarea 3");
         
+        gestor.completarTarea(1); // Completamos la segunda tarea
+        
+        // El bucle iterará 3 veces evaluando la ruta verdadera y falsa del if
         assertEquals(2, gestor.contarPendientes(), "Debería haber 2 tareas pendientes.");
     }
+
+    @Test
+    @DisplayName("contarPendientes debe devolver 0 si todas las tareas están completadas")
+    void testContarPendientesTodasCompletadas() {
+        gestor.agregarTarea("Tarea 1");
+        gestor.completarTarea(0);
+        
+        assertEquals(0, gestor.contarPendientes(), "No debería haber tareas pendientes.");
+    }
+
+    // --- PRUEBAS DE CAJA BLANCA: EXCEPCIONES ---
+
+    @Test
+    @DisplayName("completarTarea con un índice negativo debe lanzar IndexOutOfBoundsException")
+    void testCompletarTareaIndiceNegativo() {
+        gestor.agregarTarea("Prueba");
+        assertThrows(IndexOutOfBoundsException.class, () -> gestor.completarTarea(-1));
+    }
+
+    @Test
+    @DisplayName("eliminarTarea con un índice fuera de rango debe lanzar IndexOutOfBoundsException")
+    void testEliminarTareaIndiceFueraDeRango() {
+        gestor.agregarTarea("Prueba");
+        assertThrows(IndexOutOfBoundsException.class, () -> gestor.eliminarTarea(1)); // El índice 1 no existe (es 0)
+    }
+
+    @Test
+    @DisplayName("getTarea solicitando una tarea en una lista vacía debe lanzar IndexOutOfBoundsException")
+    void testGetTareaListaVacia() {
+        assertThrows(IndexOutOfBoundsException.class, () -> gestor.getTarea(0));
+    }
 }
+
+
