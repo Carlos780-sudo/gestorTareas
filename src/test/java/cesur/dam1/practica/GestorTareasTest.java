@@ -32,28 +32,27 @@ public class GestorTareasTest {
     }
 
     // PRUEBA 3: Forzar el bug al completar un índice inválido (Caja Blanca)
-    // ⚠️ NOTA: Esta prueba va a fallar (saldrá en ROJO) porque el código original no está protegido.
+   
     @Test
     void testCompletarTareaIndiceInvalido() {
         GestorTareas gestor = new GestorTareas();
         gestor.agregarTarea("Hacer el trabajo final");
         
         // Intentamos completar la posición 99 (que no existe)
-        // Debería lanzar una excepción controlada, pero el programa romperá con IndexOutOfBoundsException
+        
         assertThrows(IndexOutOfBoundsException.class, () -> {
             gestor.completarTarea(99);
         });
     }
 
     // PRUEBA 4: Comprobar el método de contar tareas pendientes (Caja Blanca)
-    // ⚠️ NOTA: Esta prueba también fallará en rojo por culpa del bug en el bucle 'for' del código original.
+    
     @Test
     void testContarPendientes() {
         GestorTareas gestor = new GestorTareas();
         gestor.agregarTarea("Tarea 1");
         gestor.agregarTarea("Tarea 2");
         
-        // Como no hemos completado ninguna, debería haber 2 pendientes
         assertEquals(2, gestor.contarPendientes(), "Debería haber 2 tareas pendientes.");
     }
 }
